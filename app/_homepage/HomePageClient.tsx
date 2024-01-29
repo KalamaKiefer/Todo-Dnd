@@ -2,6 +2,7 @@
 
 import { AddTodoModal } from "@/components/AddTodoModal";
 import { ColumnList } from "@/components/ColumnList";
+import { reorder } from "@/lib/helpers";
 import { ListType } from "@/lib/types";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { Plus } from "@phosphor-icons/react";
@@ -31,6 +32,36 @@ export const HomePageClient = () => {
         <DragDropContext
             onDragEnd={(result) => {
                 const { source, destination } = result;
+
+                if (!destination) return;
+
+                const sourceListId = source.droppableId;
+                const destinationListId = destination.droppableId;
+
+                const sourceList = lists.find(
+                    (list) => list.columnId === sourceListId
+                );
+
+                if (!sourceList) return;
+
+                if (sourceListId === destinationListId) {
+                    const todos = reorder({
+                        list: sourceList.todos,
+                        startIndex: source.index,
+                        endIndex: destination.index,
+                    });
+
+                    setLists((state) => [
+                        {
+                            columnId: sourceList.columnId,
+                            title: sourceList.title,
+                            todos: todos,
+                        },
+                        ...state.filter(
+                            (list) => list.columnId !== sourceList.columnId
+                        ),
+                    ]);
+                }
             }}
         >
             <div className="flex flex-col gap-10">

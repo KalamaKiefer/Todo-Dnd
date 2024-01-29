@@ -6,7 +6,7 @@ import React from "react";
 
 export interface TodoModalProps {
     open: boolean;
-    onChange: () => React.Dispatch<React.SetStateAction<boolean>>;
+    onChange: React.Dispatch<React.SetStateAction<boolean>>;
     lists: ListType[];
     setLists: React.Dispatch<React.SetStateAction<ListType[]>>;
 }
@@ -59,7 +59,7 @@ export const AddTodoModal = ({
                             ]);
 
                             rForm.current.reset();
-                            onChange();
+                            onChange(false);
                         }}
                     >
                         <label>
