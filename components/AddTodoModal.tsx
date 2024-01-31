@@ -1,6 +1,7 @@
 "use client";
 
 import { ListType, TodoType } from "@/lib/types";
+import { Check } from "@phosphor-icons/react";
 import * as Dialog from "@radix-ui/react-dialog";
 import React from "react";
 
@@ -36,7 +37,7 @@ export const AddTodoModal = ({
                             const text = formData.get("todotext")?.toString();
 
                             const todoList = lists.find(
-                                (list) => list.columnId === "todo"
+                                (list) => list.listId === "todo"
                             );
 
                             if (!text || !todoList) return;
@@ -49,29 +50,36 @@ export const AddTodoModal = ({
 
                             setLists((state) => [
                                 {
-                                    columnId: todoList.columnId,
+                                    listId: todoList.listId,
                                     title: todoList.title,
                                     todos: [newTodo, ...todoList.todos],
                                 },
                                 ...state.filter(
-                                    (list) => list.columnId !== "todo"
+                                    (list) => list.listId !== "todo"
                                 ),
                             ]);
 
                             rForm.current.reset();
                             onChange(false);
                         }}
+                        className="flex flex-col items-center gap-8"
                     >
                         <label>
                             <p>Todo Item:</p>
-                            <input type="text" name="todotext" />
+                            <input
+                                type="text"
+                                name="todotext"
+                                className="border border-mutedBlack mt-1 min-h-[50px] rounded-2xl pl-3"
+                            />
                         </label>
 
                         <button
-                            className="border border-mutedBlack py-2 px-4 rounded-2xl"
+                            className="border border-mutedBlack py-2 px-8 rounded-2xl h-fit flex items-center gap-3 hover:bg-mutedBlack transition ease-in-out duration-300 hover:text-white text-mutedBlack"
                             type="submit"
                         >
-                            Submit
+                            <span className="sr-only">Submit Todo</span>
+                            <p className="text-lg">Submit</p>
+                            <Check className="w-5 h-5  " />
                         </button>
                     </form>
                 </Dialog.Content>

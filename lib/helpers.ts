@@ -13,3 +13,23 @@ export const reorder = <T>({
 
     return result;
 };
+
+export const move = <T>({
+    sourceTodos,
+    destinationTodos,
+    sourceIndex,
+    destinationIndex,
+}: {
+    sourceTodos: Array<T>;
+    destinationTodos: Array<T>;
+    sourceIndex: number;
+    destinationIndex: number;
+}) => {
+    const sourceClone = Array.from(sourceTodos);
+    const destClone = Array.from(destinationTodos);
+    const [removed] = sourceClone.splice(sourceIndex, 1);
+
+    destClone.splice(destinationIndex, 0, removed);
+
+    return { sourceTodos: sourceClone, destinationTodos: destClone };
+};

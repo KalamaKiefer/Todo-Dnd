@@ -7,5 +7,5 @@ export type TodoType = {
 export type ListType = {
     title: string;
     todos: Array<TodoType>;
-    columnId: "todo" | "in-progress" | "done";
+    listId: "todo" | "in-progress" | "done";
 };

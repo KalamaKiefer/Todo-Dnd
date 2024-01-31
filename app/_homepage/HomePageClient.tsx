@@ -2,7 +2,7 @@
 
 import { AddTodoModal } from "@/components/AddTodoModal";
 import { ColumnList } from "@/components/ColumnList";
-import { reorder } from "@/lib/helpers";
+import { move, reorder } from "@/lib/helpers";
 import { ListType } from "@/lib/types";
 import { DragDropContext } from "@hello-pangea/dnd";
 import { Plus } from "@phosphor-icons/react";
@@ -11,17 +11,17 @@ import React from "react";
 export const HomePageClient = () => {
     const [lists, setLists] = React.useState<Array<ListType>>([
         {
-            columnId: "todo",
+            listId: "todo",
             title: "Todo",
             todos: [],
         },
         {
-            columnId: "in-progress",
+            listId: "in-progress",
             title: "In Progress",
             todos: [],
         },
         {
-            columnId: "done",
+            listId: "done",
             title: "Finished",
             todos: [],
         },
@@ -39,7 +39,7 @@ export const HomePageClient = () => {
                 const destinationListId = destination.droppableId;
 
                 const sourceList = lists.find(
-                    (list) => list.columnId === sourceListId
+                    (list) => list.listId === sourceListId
                 );
 
                 if (!sourceList) return;
@@ -53,21 +53,50 @@ export const HomePageClient = () => {
 
                     setLists((state) => [
                         {
-                            columnId: sourceList.columnId,
+                            listId: sourceList.listId,
                             title: sourceList.title,
                             todos: todos,
                         },
                         ...state.filter(
-                            (list) => list.columnId !== sourceList.columnId
+                            (list) => list.listId !== sourceList.listId
                         ),
                     ]);
+                } else {
+                    if (!lists) return;
+                    const sourceTodoList =
+                        lists.find((list) => list.listId === sourceListId)
+                            ?.todos ?? [];
+                    const destinationTodoList =
+                        lists.find((list) => list.listId === destinationListId)
+                            ?.todos ?? [];
+
+                    const fromIdx = lists.findIndex(
+                        (list) => list.listId === sourceListId
+                    );
+                    const toIdx = lists.findIndex(
+                        (list) => list.listId === destinationListId
+                    );
+
+                    const result = move({
+                        sourceTodos: sourceTodoList,
+                        destinationTodos: destinationTodoList,
+                        sourceIndex: source.index,
+                        destinationIndex: destination.index,
+                    });
+
+                    const newLists = structuredClone(lists);
+
+                    newLists[fromIdx].todos = result.sourceTodos;
+                    newLists[toIdx].todos = result.destinationTodos;
+
+                    setLists(newLists);
                 }
             }}
         >
             <div className="flex flex-col gap-10">
                 <button
                     onClick={() => setOpenAddTodoModal(true)}
-                    className="rounded-xl px-4 py-2 flex gap-2 items-center border-white border w-fit mx-auto"
+                    className="rounded-xl px-4 py-2 flex gap-2 items-center border-white border w-fit mx-auto brightness-75 ease-in-out transition duration-200 hover:brightness-150"
                 >
                     <span className="sr-only">Add Todo Item</span>
                     <p className="text-xl text-white">Add Todo</p>
@@ -76,9 +105,9 @@ export const HomePageClient = () => {
                 <div className="flex flex-col lg:flex-row items-center gap-10 w-full mx-auto lg:justify-between lg:max-w-[1200px] px-10 pb-20">
                     {lists.map((list) => (
                         <ColumnList
-                            key={list.columnId}
+                            key={list.listId}
                             title={list.title}
-                            columnId={list.columnId}
+                            listId={list.listId}
                             todos={list.todos}
                         />
                     ))}

@@ -1,7 +1,7 @@
 import { ListType } from "@/lib/types";
 import { Draggable, Droppable } from "@hello-pangea/dnd";
 
-export const ColumnList = ({ title, columnId, todos }: ListType) => {
+export const ColumnList = ({ title, listId: columnId, todos }: ListType) => {
     return (
         <div className="w-[306px] min-h-[400px] rounded-2xl bg-gray-300 px-2 py-3">
             <div className="flex items-center justify-between w-full border-b-2 border-black">
